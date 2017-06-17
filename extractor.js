@@ -27,11 +27,13 @@ module.exports = (file, extracts = EXTRACT_DEFAULTS) => {
 
   let parser = getParser((name, attrs) => {
     if (name in extracts) {
-      const filePath = attrs[extracts[name]]
-      const ext = path.extname(filePath)
-      if (ext.length > 2 && validStaticFile(ext.substr(1))) {
-        const contentType = mimeLookup(filePath)
-        result.push({ filePath, contentType })
+      if (extracts[name] in attrs) {
+        const filePath = attrs[extracts[name]]
+        const ext = path.extname(filePath)
+        if (ext.length > 1 && validStaticFile(ext.substr(1))) {
+          const contentType = mimeLookup(filePath)
+          result.push({ filePath, contentType })
+        }
       }
     }
   })
