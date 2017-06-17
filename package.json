@@ -1,0 +1,29 @@
+{
+  "name": "html-static-asset-path-extractor",
+  "version": "1.0.0",
+  "description": "A simple utility to extract static assets' path from an HTML page",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/applefreak/html-static-asset-path-extractor.git"
+  },
+  "keywords": [
+    "html",
+    "parser",
+    "extractor"
+  ],
+  "author": "Po-Yu Chen <me@poyu.xyz>",
+  "license": "MIT",
+  "devDependencies": {
+    "istanbul": "^0.4.5",
+    "mocha": "^3.4.2",
+    "should": "^11.2.1"
+  },
+  "dependencies": {
+    "htmlparser2": "^3.9.2",
+    "mime-types": "^2.1.15"
+  }
+}
