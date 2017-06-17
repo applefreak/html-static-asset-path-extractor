@@ -11,6 +11,7 @@ npm install --save html-static-asset-path-extractor
 ## Usage
 
 ```javascript
+const extractor = require('html-static-asset-path-extractor')
 extractor('./test.html')
 ```
 

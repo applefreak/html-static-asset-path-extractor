@@ -1,8 +1,8 @@
 {
   "name": "html-static-asset-path-extractor",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A simple utility to extract static assets' path from an HTML page",
-  "main": "index.js",
+  "main": "extractor.js",
   "scripts": {
     "test": "mocha"
   },
