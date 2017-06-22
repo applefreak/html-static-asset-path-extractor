@@ -23,26 +23,28 @@ const getParser = (onopentag) => {
 const slashSlicer = (string) =>  (string[0] !== '/') ? string : string.substr(1)
 
 module.exports = (file, extracts = EXTRACT_DEFAULTS) => {
-  const result = []
+  return new Promise((resolve, reject) => {
+    const result = []
 
-  let parser = getParser((name, attrs) => {
-    if (name in extracts) {
-      if (extracts[name] in attrs) {
-        const filePath = slashSlicer(attrs[extracts[name]])
-        const ext = path.extname(filePath)
-        if (ext.length > 1 && validStaticFile(ext.substr(1))) {
-          const contentType = mimeLookup(filePath)
-          result.push({ filePath, contentType })
+    let parser = getParser((name, attrs) => {
+      if (name in extracts) {
+        if (extracts[name] in attrs) {
+          const filePath = slashSlicer(attrs[extracts[name]])
+          const ext = path.extname(filePath)
+          if (ext.length > 1 && validStaticFile(ext.substr(1))) {
+            const contentType = mimeLookup(filePath)
+            result.push({ filePath, contentType })
+          }
         }
       }
-    }
-  })
+    })
 
-  const fileStream = fs.createReadStream(file)
+    const fileStream = fs.createReadStream(file)
 
-  fileStream.on('data', data => parser.write(data))
-  fileStream.on('end', () => {
-    parser.end()
-    return result
+    fileStream.on('data', data => parser.write(data))
+    fileStream.on('end', () => {
+      parser.end()
+      resolve(result)
+    })
   })
 }
