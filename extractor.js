@@ -20,15 +20,15 @@ const getParser = (onopentag) => {
   return parser ? parser : initParser()
 }
 
+const slashSlicer = (string) =>  (string[0] !== '/') ? string : string.substr(1)
+
 module.exports = (file, extracts = EXTRACT_DEFAULTS) => {
   const result = []
-  // TODO handle error
-  const content = fs.readFileSync(file)
 
   let parser = getParser((name, attrs) => {
     if (name in extracts) {
       if (extracts[name] in attrs) {
-        const filePath = attrs[extracts[name]]
+        const filePath = slashSlicer(attrs[extracts[name]])
         const ext = path.extname(filePath)
         if (ext.length > 1 && validStaticFile(ext.substr(1))) {
           const contentType = mimeLookup(filePath)
@@ -37,8 +37,12 @@ module.exports = (file, extracts = EXTRACT_DEFAULTS) => {
       }
     }
   })
-  parser.write(content)
-  parser.end()
 
-  return result
+  const fileStream = fs.createReadStream(file)
+
+  fileStream.on('data', data => parser.write(data))
+  fileStream.on('end', () => {
+    parser.end()
+    return result
+  })
 }
