@@ -10,17 +10,12 @@ const EXTRACT_DEFAULTS = {
   script: 'src',
 }
 
-const getParser = (onopentag) => {
-  let parser = undefined
-  const initParser = () => {
-    parser = new htmlparser({ onopentag }, {decodeEntities: true})
-    return parser
-  }
-
-  return parser ? parser : initParser()
-}
-
+const getParser = (onopentag) => new htmlparser({ onopentag }, {decodeEntities: true})
 const slashSlicer = (string) =>  (string[0] !== '/') ? string : string.substr(1)
+const isFilepath = (string) => {
+  let fp = path.parse(string)
+  return fp.root !== '' && fp.dir !== '' && fp.base !== ''
+}
 
 module.exports = (file, extracts = EXTRACT_DEFAULTS) => {
   return new Promise((resolve, reject) => {
@@ -39,12 +34,18 @@ module.exports = (file, extracts = EXTRACT_DEFAULTS) => {
       }
     })
 
-    const fileStream = fs.createReadStream(file)
+    if (isFilepath(file)) {
+      const fileStream = fs.createReadStream(file)
 
-    fileStream.on('data', data => parser.write(data))
-    fileStream.on('end', () => {
+      fileStream.on('data', data => parser.write(data))
+      fileStream.on('end', () => {
+        parser.end()
+        resolve(result)
+      })
+    } else {
+      parser.write(file)
       parser.end()
       resolve(result)
-    })
+    }
   })
 }
